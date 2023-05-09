@@ -52,9 +52,10 @@ public class PetController {
 
     @GetMapping("/upload/{filename}")
     public ResponseEntity upload(@PathVariable String filename) throws IOException {
-        Path filePath = Path.of(uploadPath + "/" + filename); // 경로를 잡아준다음에
+//        Path filePath = Path.of(uploadPath + "/" + filename); // 경로를 잡아준다음에
         // 경로에서 바이트 그대로 읽어올 것임
-        byte[] byteArray = Files.readAllBytes(filePath);
+//        byte[] byteArray = Files.readAllBytes(filePath);
+        byte[] byteArray = petService.loadFile(filename);
         return new ResponseEntity<>(byteArray, HttpStatus.OK);
     }
 }
