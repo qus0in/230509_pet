@@ -3,15 +3,17 @@ import io.playdata.pet.model.Pet;
 
 import io.playdata.pet.service.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Controller
 public class PetController {
@@ -43,5 +45,16 @@ public class PetController {
     ) throws IOException {
         petService.savePet(pet, imageFile, voiceFile);
         return "redirect:/";
+    }
+
+    @Value("${upload.path}") // application.properties에 지정
+    private String uploadPath;
+
+    @GetMapping("/upload/{filename}")
+    public ResponseEntity upload(@PathVariable String filename) throws IOException {
+        Path filePath = Path.of(uploadPath + "/" + filename); // 경로를 잡아준다음에
+        // 경로에서 바이트 그대로 읽어올 것임
+        byte[] byteArray = Files.readAllBytes(filePath);
+        return new ResponseEntity<>(byteArray, HttpStatus.OK);
     }
 }
